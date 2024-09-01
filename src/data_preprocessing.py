@@ -1,5 +1,11 @@
+import os
 import pandas as pd
 import numpy as np
+
+
+def load_data(file_path: str) -> pd.DataFrame:
+    """Load the raw data from a CSV file."""
+    return pd.read_csv(file_path)
 
 def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
     """Perform preprocessing on the dataset while keeping Kelvin values for consistency."""
@@ -46,3 +52,23 @@ def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
     )
     
     return df
+
+def save_processed_data(df: pd.DataFrame, save_path: str):
+    """Save the processed data to a CSV file."""
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+    processed_file_path = os.path.join(save_path, 'processed_data.csv')
+    df.to_csv(processed_file_path, index=False)
+    print(f"Processed data saved successfully at {os.path.abspath(processed_file_path)}")
+
+if __name__ == "__main__":
+    # Resolve paths relative to the current script's directory
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    raw_data_path = os.path.join(base_dir, '../data/raw/predictive_maintenance_raw_data.csv')
+    processed_data_path = os.path.join(base_dir, '../data/processed/')
+    
+    # Load, preprocess, and save the data
+    df = load_data(raw_data_path)
+    df = preprocess_data(df)
+    save_processed_data(df, processed_data_path)
